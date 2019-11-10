@@ -37,25 +37,44 @@ def Signup(request):
 
 
 def Login(request):
-    if request.method=="POST":
-        form=LoginForm(request.POST)
-
-        if form.is_valid():
-           # # TODO: add on to verify user
-           username=form.cleaned_data['username']
-           return HttpResponseRedirect(reverse('dashboard',args=(username,)))
-
+    if request.session.get('name'):
+       nm=request.session.get('name')
+       return HttpResponseRedirect(reverse('dashboard',args=(nm,)))
     else:
-        form=LoginForm()
-    context={
-    'form':form,
-    }
-    return render(request,'Login.html',context)
+       if request.method=="POST":
+           form=LoginForm(request.POST)
+
+           if form.is_valid():
+              username=form.cleaned_data['username']
+              request.session['name']=username
+              print(request.session['name'])
+              print("sesssion set!")
+              return HttpResponseRedirect(reverse('dashboard',args=(username,)))
+       else:
+            form=LoginForm()
+       context={
+             'form':form,
+         }
+       return render(request,'Login.html',context)
+
+
 
 
 def dashboard(request,user):
-    context={
-    'user':user
-    }
+    if request.session.get('name')==user:
+        context={
+        'user':user
+        }
+        return render(request,'dashboard.html',context=context)
+    else:
+        return HttpResponseRedirect(reverse('login'))
 
-    return render(request,'dashboard.html',context=context)
+
+def logout(request,user):
+    try:
+        del request.session['name']
+        print("user deleted")
+        print(request.session['name'])
+    except :
+          pass
+    return HttpResponseRedirect(reverse('login'))
