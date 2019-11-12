@@ -3,6 +3,7 @@ from group.models import Register
 from django.urls import reverse,reverse_lazy
 from group.forms import SignupForm,LoginForm
 from django.http import HttpResponseRedirect
+from django.core.files.storage import FileSystemStorage
 from hashing import *
 # Create your views here.
 
@@ -62,10 +63,24 @@ def Login(request):
 
 def dashboard(request,user):
     if request.session.get('name')==user:
+        us=Register.objects.get(username=user)
+        if request.method == 'POST' :
+            if request.FILES['myfile']:
+                myfile = request.FILES['myfile']
+                fs = FileSystemStorage()
+                filename = fs.save(myfile.name, myfile)
+                uploaded_file_url = fs.url(filename)
+                us.img_link=uploaded_file_url
+                us.save()
+                print(uploaded_file_url)
+                return render(request, 'dashboard.html', {
+                    'us':us,'user':user,
+                    })
         context={
         'user':user
         }
         return render(request,'dashboard.html',context=context)
+
     else:
         return HttpResponseRedirect(reverse('login'))
 
