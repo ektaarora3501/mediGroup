@@ -49,7 +49,6 @@ class LoginForm(forms.Form):
         us=self.cleaned_data['username']
         ps=self.cleaned_data['password']
         actual=Register.objects.get(username=us).password
-        print(actual,ps)
         if verify_password(actual,ps) is False:
             raise ValidationError(_("Inavlid Password"))
         return ps
