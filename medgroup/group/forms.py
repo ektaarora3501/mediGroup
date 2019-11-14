@@ -63,6 +63,7 @@ class VerificationForm(forms.Form):
     code=CharField(max_length=4,help_text="enter the opt sent ",label="Otp")
 
 
+
 ## TODO: update form ... fields not clear
 
 
