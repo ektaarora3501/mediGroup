@@ -34,6 +34,11 @@ class SignupForm(forms.Form):
         if  ps!=cnf:
             raise ValidationError(_("please reconfirm your password"))
         return cnf
+    def clean_ph(self):
+        em=self.cleaned_data['ph']
+        if Register.objects.filter(ph_no=em).exists():
+            raise ValidationError(_("The given number is already registered"))
+        return em
 
 class LoginForm(forms.Form):
     username=CharField(max_length=10,label='Username')
@@ -52,3 +57,23 @@ class LoginForm(forms.Form):
         if verify_password(actual,ps) is False:
             raise ValidationError(_("Inavlid Password"))
         return ps
+
+
+class VerificationForm(forms.Form):
+    code=CharField(max_length=4,help_text="enter the opt sent ",label="Otp")
+
+
+## TODO: update form ... fields not clear
+
+
+class ForgotPassForm(forms.Form):
+    email=EmailField()
+
+    def clean_email(self):
+        us=self.cleaned_data['email']
+        if Register.objects.filter(email=us).exists():
+            print(Register.objects.filter(email=us))
+            return us
+        else:
+            raise ValidationError(_("Sorry that email is not registered with us !! Try signup "))
+        return us
