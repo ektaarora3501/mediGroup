@@ -1,7 +1,7 @@
 <html>
 <head>
   <title>
-    Registration form
+    Forgot pass form
   </title>
   <style>
 
@@ -50,6 +50,7 @@
 <body>
   <div class="header">
   </div>
+  {{ err }}
   <form action="" method="post" >
     <div class="container">
      <div class="body">
@@ -74,8 +75,7 @@
  <div class="field">
    <br>
   <input type="submit" value="Submit">
-  <br>
-  already registered <a href="{% url 'login' %}">login here</a>
+
 
 </div>
 </div>

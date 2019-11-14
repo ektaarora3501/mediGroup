@@ -7,7 +7,7 @@ class Register(models.Model):
     last_name=models.CharField(max_length=100)
     username=models.CharField(max_length=50,unique=True)
     email=models.EmailField()
-    ph_no=models.CharField(max_length=10)
+    ph_no=models.CharField(max_length=10,unique=True)
     password=models.CharField(max_length=1000,default="")
     image_link=models.CharField(max_length=100,default="")
 
