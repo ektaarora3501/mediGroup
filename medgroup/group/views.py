@@ -52,7 +52,7 @@ def Send(request,phone):
         message = client.messages.create(
                                   body=st,
                                   from_='whatsapp:+14155238886',
-                                  to='whatsapp:+918360581227'
+                                  to='whatsapp:****************'
                               )
         print("otp sent")
     except:
@@ -149,7 +149,7 @@ def forgot_pass(request):
         if form.is_valid():
             print("here ,form valid ")
             msg = EmailMessage('Email Setup link',
-                        to=['iamdeveloper3553@gmail.com'])
+                        to=['*****************@gmail.com'])
             msg.send()
             print("mail sent")
             # TODO:  set up email link and update password
