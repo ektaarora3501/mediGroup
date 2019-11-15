@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from group.models import Register
 from django.urls import reverse,reverse_lazy
-from group.forms import SignupForm,LoginForm,VerificationForm,ForgotPassForm
+from group.forms import SignupForm,LoginForm,VerificationForm,ForgotPassForm,ResetPassForm
 from django.http import HttpResponseRedirect
 from django.core.files.storage import FileSystemStorage
 from hashing import *
@@ -9,6 +9,8 @@ import random
 import os
 from twilio.rest import Client
 from django.core.mail import EmailMessage
+
+from django.core.mail import EmailMultiAlternatives
 # Create your views here.
 
 account_sid="**************************"
@@ -51,9 +53,8 @@ def Send(request,phone):
     try:
         message = client.messages.create(
                                   body=st,
-                                  from_='whatsapp:+14155238886',
-                                  to='whatsapp:****************'
-                              )
+                                  from_='whatsapp:+++++++++++',
+                                  to='whatsapp:+++++++++++++'
         print("otp sent")
     except:
         print("error in sending message")
@@ -148,11 +149,19 @@ def forgot_pass(request):
         form = ForgotPassForm(request.POST)
         if form.is_valid():
             print("here ,form valid ")
-            msg = EmailMessage('Email Setup link',
-                        to=['*****************@gmail.com'])
+            email=form.cleaned_data['email']
+            us=str(Register.objects.get(email=email).id)
+            print(us)
+            rn=str(random.randrange(1000,9999))
+            code1=hash_password(rn)
+            code2=hash_password(rn)
+            email_link=str('http://127.0.0.1:8000/medico/reset/'+code1+'/'+us + '/' +code2)
+            subject, from_email, to = 'hello', '**********@gmail.com', '**********@gmail.com'
+            text_content = 'This is an important message.'
+            html_content = 'someone  requested reset password for your account ,click on the link below <br>'+email_link
+            msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+            msg.attach_alternative(html_content, "text/html")
             msg.send()
-            print("mail sent")
-            # TODO:  set up email link and update password
             return HttpResponseRedirect(reverse('login'))
         else:
             err =" email not registered "
@@ -174,7 +183,7 @@ def forgot_pass(request):
 
 
 
-def logout(request,user):
+def Logout(request,user):
     try:
         del request.session['name']
         print("user deleted")
@@ -182,3 +191,25 @@ def logout(request,user):
     except :
           pass
     return HttpResponseRedirect(reverse('login'))
+
+
+def Reset(request,code1,id,code2):
+    print(id)
+    us=Register.objects.get(id=id)
+    if request.method=='POST':
+        form = ResetPassForm(request.POST)
+        if form.is_valid():
+            password=form.cleaned_data['password']
+            print("saved",password)
+            ps=hash_password(password)
+            us.password=ps
+            us.save()
+            return HttpResponseRedirect(reverse('login'))
+
+    else:
+        form=ResetPassForm()
+    context={
+         'username':us.username,
+         'form':form,
+         }
+    return render(request,'set_pass.html',context)
