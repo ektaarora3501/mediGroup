@@ -55,7 +55,6 @@ def Send(request,phone):
                                   body=st,
                                   from_='whatsapp:+++++++++++',
                                   to='whatsapp:+++++++++++++'
-                              )
         print("otp sent")
     except:
         print("error in sending message")
