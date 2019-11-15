@@ -78,3 +78,19 @@ class ForgotPassForm(forms.Form):
         else:
             raise ValidationError(_("Sorry that email is not registered with us !! Try signup "))
         return us
+
+
+class ResetPassForm(forms.Form):
+    password=CharField(widget=PasswordInput(),max_length=12,label="new password")
+    confirm=CharField(widget=PasswordInput(),max_length=12,label="Confirm password")
+
+    def clean_confirm(self):
+        pas=self.cleaned_data['password']
+        cnf=self.cleaned_data['confirm']
+
+        if len(pas)<6:
+            raise ValidationError(_("Minimum 6 characters required"))
+
+        if pas!=cnf:
+            raise ValidationError(_("Please reconfirm your password"))
+        return pas
