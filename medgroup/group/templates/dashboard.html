@@ -212,10 +212,17 @@ function closeNav() {
 
 <div class="content">
   hello {{ user }} to your dashboard
+  <br> <a href="{% url 'create_channel' %}">Join channel</a>
 </div>
-<div class="video">
-  <iframe  width="680" height="375" src="https://www.youtube.com/embed/rlR4PJn8b8I" frameborder="0" allowfullscreen></iframe>
-</div>
+<br>
+Current Channels you are member
+<br>
+{% if ch %}
+  {% for chan in ch %}
+   <span><a href="{% url 'room' chan %}">{{ chan }}</a></span>
+   <br>
+    {% endfor %}
+{% endif %}
 <button class="open-button" onclick="openForm()">Chat</button>
 
 <div class="chat-popup" id="myForm">
