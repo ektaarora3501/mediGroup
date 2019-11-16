@@ -44,15 +44,16 @@ class LoginForm(forms.Form):
     username=CharField(max_length=10,label='Username')
     password=CharField(max_length=12,label='Password',widget=PasswordInput)
 
-    def clean_username(self):
-        us=self.cleaned_data['username']
-        if Register.objects.filter(username=us).exists():
-            return us
-        else:
-            raise ValidationError(_("The given username not registered"))
+
     def clean_password(self):
         us=self.cleaned_data['username']
         ps=self.cleaned_data['password']
+        if Register.objects.filter(username=us).exists():
+            pass
+        else:
+            raise ValidationError(_("User name not registered"))
+            return us
+
         actual=Register.objects.get(username=us).password
         if verify_password(actual,ps) is False:
             raise ValidationError(_("Inavlid Password"))
