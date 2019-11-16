@@ -9,6 +9,9 @@ urlpatterns=[
      path('login',views.Login,name='login'),
      path('reset/<code1>/<id>/<code2>',views.Reset,name='reset_pass'),
      path('forgot_pass',views.forgot_pass,name='forgot_pass'),
+     path('join/<str:room_name>',views.Join_room,name='join_room'),
+     path('channel_create',views.Channel_create,name='create_channel'),
      path('userpage/<user>',views.dashboard,name='dashboard'),
+     path('chat/<str:room_name>/',views.room,name='room'),
      path('logout/<user>',views.Logout,name='logout'),
 ]
