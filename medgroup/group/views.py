@@ -1,16 +1,17 @@
 from django.shortcuts import render,redirect
-from group.models import Register
+from group.models import Register,Channels,Chat
 from django.urls import reverse,reverse_lazy
 from group.forms import SignupForm,LoginForm,VerificationForm,ForgotPassForm,ResetPassForm
 from django.http import HttpResponseRedirect
+from django.utils.safestring import mark_safe
 from django.core.files.storage import FileSystemStorage
+from twilio.rest import Client
+from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from hashing import *
 import random
 import os
-from twilio.rest import Client
-from django.core.mail import EmailMessage
-
-from django.core.mail import EmailMultiAlternatives
+import json
 # Create your views here.
 
 account_sid="**************************"
@@ -64,9 +65,6 @@ def Send(request,phone):
 
 
 
-
-
-
 def Login(request):
     if request.session.get('name'):
        nm=request.session.get('name')
@@ -92,6 +90,11 @@ def Login(request):
 def dashboard(request,user):
     if request.session.get('name')==user:
         us=Register.objects.get(username=user)
+        #try:
+        ch=Channels.objects.filter(user=user).all()
+        print(ch)
+        #except
+        #    ch=None
         if request.method == 'POST' :
             if request.FILES['myfile']:
                 myfile = request.FILES['myfile']
@@ -102,10 +105,12 @@ def dashboard(request,user):
                 us.save()
                 print(uploaded_file_url)
                 return render(request, 'dashboard.html', {
-                    'us':us,'user':user,
+                    'us':us,'user':user,'ch':ch
                     })
         context={
-        'user':user
+        'user':user,
+        'ch':ch,
+
         }
         return render(request,'dashboard.html',context=context)
 
@@ -157,7 +162,7 @@ def forgot_pass(request):
             code1=hash_password(rn)
             code2=hash_password(rn)
             email_link=str('http://127.0.0.1:8000/medico/reset/'+code1+'/'+us + '/' +code2)
-            subject, from_email, to = 'hello', '**********@gmail.com', '**********@gmail.com'
+            subject, from_email, to = 'hello', 'iamdeveloper3553@gmail.com', 'pycoders3501@gmail.com'
             text_content = 'This is an important message.'
             html_content = 'someone  requested reset password for your account ,click on the link below <br>'+email_link
             msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
@@ -214,3 +219,44 @@ def Reset(request,code1,id,code2):
          'form':form,
          }
     return render(request,'set_pass.html',context)
+
+
+def room(request, room_name):
+    if request.session.get('name'):
+        us=Channels()
+        user=request.session.get('name')
+        us.channel=room_name
+        us.user=user
+        if Channels.objects.filter(user=user,channel=room_name).exists():
+            pass
+        else:
+            us.save()
+        return render(request, 'room.html', {
+        'room_name_json': mark_safe(json.dumps(room_name))
+        })
+    else:
+        return HttpResponseRedirect(reverse('login'))
+
+def Channel_create(request):
+    us=Channels.objects.all()
+    return render(request,'join_chat.html',{'us':us})
+
+def Join_room(request,room_name):
+    us=Channels()
+    user=request.session.get('name')
+    if Channels.objects.filter(user=user,channel=room_name).exists():
+        pass
+    else:
+        us.user=user
+        us.channel=room_name
+        print("herr")
+        us.save()
+    return  HttpResponseRedirect(reverse('room',args=(room_name,)))
+
+    '''def Create_channel(request,room_name):
+    if request.session.get('name'):
+        us=Channels()
+        us.user=request.session.get('name')
+        channel=room_name
+        us.save()
+        return HttpResponseRedirect(reverse('room',args=(room_name,)))'''
