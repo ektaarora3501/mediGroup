@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from group.models import Register,Channels,Chat
+from group.models import Register,Channels,Chat,Members
 from django.urls import reverse,reverse_lazy
 from group.forms import SignupForm,LoginForm,VerificationForm,ForgotPassForm,ResetPassForm
 from django.http import HttpResponseRedirect
@@ -14,8 +14,8 @@ import os
 import json
 # Create your views here.
 
-account_sid="**************************"
-auth_token="*****************************"
+account_sid="***************************"
+auth_token="++++++++++++++++++++++++++"
 
 client=Client(account_sid,auth_token)
 
@@ -54,8 +54,8 @@ def Send(request,phone):
     try:
         message = client.messages.create(
                                   body=st,
-                                  from_='whatsapp:+++++++++++',
-                                  to='whatsapp:+++++++++++++'
+                                  from_='whatsapp:+****************',
+                                  to='whatsapp:***********')
         print("otp sent")
     except:
         print("error in sending message")
@@ -89,11 +89,10 @@ def Login(request):
 def dashboard(request,user):
     if request.session.get('name')==user:
         us=Register.objects.get(username=user)
-        #try:
-        ch=Channels.objects.filter(user=user).all()
+        ch=Members.objects.filter(member=user).values_list('channel', flat=True).order_by('id')
         print(ch)
-        #except
-        #    ch=None
+        all_ch=Channels.objects.all().values_list('channel', flat=True).order_by('id')
+        print(all_ch)
         if request.method == 'POST' :
             if request.FILES['myfile']:
                 myfile = request.FILES['myfile']
@@ -104,11 +103,12 @@ def dashboard(request,user):
                 us.save()
                 print(uploaded_file_url)
                 return render(request, 'dashboard.html', {
-                    'us':us,'user':user,'ch':ch
+                    'us':us,'user':user,'ch':ch,'all':all_ch,
                     })
         context={
         'user':user,
         'ch':ch,
+        'all':all_ch,
 
         }
         return render(request,'dashboard.html',context=context)
@@ -139,13 +139,13 @@ def verify_ph(request,code,phone):
 
     else:
         form=VerificationForm()
+
         context={
          'err':err,
          'ph':phone,
          'form':form,
          }
         return render(request,'verify.html',context)
-
 
 
 def forgot_pass(request):
@@ -222,35 +222,45 @@ def Reset(request,code1,id,code2):
 
 def room(request, room_name):
     if request.session.get('name'):
-        us=Channels()
-        user=request.session.get('name')
-        us.channel=room_name
-        us.user=user
-        if Channels.objects.filter(user=user,channel=room_name).exists():
-            pass
-        else:
-            us.save()
+        all_ch=Members.objects.all().filter(channel=room_name).values_list('member', flat=True).order_by('id')
         return render(request, 'room.html', {
-        'room_name_json': mark_safe(json.dumps(room_name))
+        'room_name_json': mark_safe(json.dumps(room_name)),
+         'all_ch':all_ch,
         })
     else:
         return HttpResponseRedirect(reverse('login'))
 
-def Channel_create(request):
-    us=Channels.objects.all()
-    return render(request,'join_chat.html',{'us':us})
+def Channel_create(request,roomName):
+    us=Channels()
+    us.creator=request.session.get('name')
+    us.channel=roomName
+    us2=Members()
+    us2.member=request.session.get('name')
+    us2.channel=roomName
+    us2.save()
+    err=None
+    try:
+        us.save()
+    except:
+        err="room already exists"
+        return HttpResponseRedirect(reverse('dashboard',args=(request.session.get('name'),)))
+    return HttpResponseRedirect(reverse('room',args=(roomName,)))
 
 def Join_room(request,room_name):
-    us=Channels()
+    us=Members()
     user=request.session.get('name')
-    if Channels.objects.filter(user=user,channel=room_name).exists():
-        pass
+    err=None
+    if Members.objects.filter(member=user,channel=room_name).exists():
+       err="already a member"
     else:
-        us.user=user
+        us.member=user
         us.channel=room_name
-        print("herr")
+        print("here")
         us.save()
-    return  HttpResponseRedirect(reverse('room',args=(room_name,)))
+    return render(request, 'room.html', {
+    'room_name_json': mark_safe(json.dumps(room_name)),
+    'err':err,
+    })
 
     '''def Create_channel(request,room_name):
     if request.session.get('name'):

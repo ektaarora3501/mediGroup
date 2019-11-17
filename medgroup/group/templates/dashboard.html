@@ -14,6 +14,7 @@ if(!!window.performance && window.performance.navigation.type == 2)
     window.location.reload();
 }
   </script>
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 
@@ -178,7 +179,6 @@ img{
 <body onunload="">
   <div class="header">
   </div>
-
 <div id="mySidenav" class="sidenav">
   <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
   <br>
@@ -212,9 +212,10 @@ function closeNav() {
 
 <div class="content">
   hello {{ user }} to your dashboard
-  <br> <a href="{% url 'create_channel' %}">Join channel</a>
+
 </div>
-<br>
+<br><br>
+
 Current Channels you are member
 <br>
 {% if ch %}
@@ -225,18 +226,33 @@ Current Channels you are member
 {% endif %}
 <button class="open-button" onclick="openForm()">Chat</button>
 
-<div class="chat-popup" id="myForm">
-  <form action="/interact/send_mail" class="form-container" method="post">
-      {% csrf_token %}
-    <h1>Chat</h1>
 
-    <label for="msg"><b>Message</b></label>
-    <textarea placeholder="Type message.." name="msg" required></textarea>
-    <input type="hidden" value="{{ us.email }}" name="email">
-    <button type="submit" class="btn">Send</button>
-    <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
-  </form>
-</div>
+    <br>
+    Available channels
+    {% for val in all %}
+      {{ val }} <span> <a href="{% url 'join_room' val %}">Become a member </a></span>
+      <br>
+    {% endfor %}
+    <br><br>
+
+
+    Create a chat room here <br/>
+    <input id="room-name-input" type="text" size="100"/><br/>
+    <input id="room-name-submit" type="button" value="Enter"/>
+
+    <script>
+        document.querySelector('#room-name-input').focus();
+        document.querySelector('#room-name-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#room-name-submit').click();
+            }
+        };
+
+        document.querySelector('#room-name-submit').onclick = function(e) {
+            var roomName = document.querySelector('#room-name-input').value;
+            window.location.pathname = 'medico/channel_create/' + roomName + '/';
+        };
+    </script>
 
 <script>
 function openForm() {
