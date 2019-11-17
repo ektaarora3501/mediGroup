@@ -161,7 +161,7 @@ def forgot_pass(request):
             code1=hash_password(rn)
             code2=hash_password(rn)
             email_link=str('http://127.0.0.1:8000/medico/reset/'+code1+'/'+us + '/' +code2)
-            subject, from_email, to = 'hello', '++++++++++++@gmail.com', '+++++++++++++@gmail.com'
+            subject, from_email, to = 'hello', '+++++++++++@gmail.com', '************@gmail.com'
             text_content = 'This is an important message.'
             html_content = 'someone  requested reset password for your account ,click on the link below <br>'+email_link
             msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
