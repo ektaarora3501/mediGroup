@@ -2,6 +2,8 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 from group.models import Register
+#from group.views import user
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -12,6 +14,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
+
         )
 
         await self.accept()
@@ -33,7 +36,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             {
                 'type': 'chat_message',
-                'message': message
+                'message': message,
             }
         )
 
@@ -43,5 +46,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
-            'message': message
+            'message': message,
         }))
+
+    async def ws_receive(message):
+    # You can check for the user attr like this
+        log.debug('%s', message.user)
+        print(message.user)
