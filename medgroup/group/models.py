@@ -10,6 +10,7 @@ class Register(models.Model):
     ph_no=models.CharField(max_length=10,unique=True)
     password=models.CharField(max_length=1000,default="")
     image_link=models.CharField(max_length=100,default="")
+    otp=models.CharField(max_length=1,default=None,null=True)
 
     def __str__(self):
         return f'{self.first_name},{self.last_name},{self.username}'
@@ -26,14 +27,15 @@ class Chat(models.Model):
 class Channels(models.Model):
     creator=models.CharField(max_length=100)
     channel=models.CharField(max_length=100,unique=True)
+    motto = models.CharField(max_length=100,default=None)
 
     def __str__(self):
         return f'{self.channel}'
 
 # a database for all the users connected to any channel
 class Members(models.Model):
-    member=models.CharField(max_length=100)
+    members=models.CharField(max_length=100)
     channel=models.CharField(max_length=100)
 
     def __str__(self):
-        return f'{self.member},{self.channel}'
+        return f'{self.members},{self.channel}'
