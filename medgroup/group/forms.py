@@ -95,3 +95,21 @@ class ResetPassForm(forms.Form):
         if pas!=cnf:
             raise ValidationError(_("Please reconfirm your password"))
         return pas
+
+
+class NewChannelForm(forms.Form):
+    """Creatig forms for new channel"""
+    room_name=CharField(max_length=100,label="Channel Name")
+    Creator=CharField(max_length=100,label="Username")
+    motto =CharField(max_length=100,label="Objective",help_text="Enter your objective of creating channel")
+
+
+
+class UpdateForm(forms.Form):
+    """docstring for UpdateForm.forms.Form
+         def __init__(self, arg):"""
+    first_name=CharField(max_length=100,label="First Name")
+    last_name=CharField(max_length=100,label="Last Name")
+    email=CharField(max_length=100,label="Email")
+
+    

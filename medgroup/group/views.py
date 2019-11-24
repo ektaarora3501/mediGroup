@@ -1,10 +1,11 @@
 from django.shortcuts import render,redirect
 from group.models import Register,Channels,Chat,Members
 from django.urls import reverse,reverse_lazy
-from group.forms import SignupForm,LoginForm,VerificationForm,ForgotPassForm,ResetPassForm
+from group.forms import SignupForm,LoginForm,VerificationForm,ForgotPassForm,ResetPassForm,NewChannelForm,UpdateForm
 from django.http import HttpResponseRedirect
 from django.utils.safestring import mark_safe
 from django.core.files.storage import FileSystemStorage
+from django.core.exceptions import ValidationError
 from twilio.rest import Client
 from django.core.mail import EmailMessage
 from django.core.mail import EmailMultiAlternatives
@@ -14,8 +15,8 @@ import os
 import json
 # Create your views here.
 
-account_sid="***************************"
-auth_token="++++++++++++++++++++++++++"
+account_sid = '++++++++++++++++++++++++++'
+auth_token = '***********************'
 
 client=Client(account_sid,auth_token)
 
@@ -54,8 +55,8 @@ def Send(request,phone):
     try:
         message = client.messages.create(
                                   body=st,
-                                  from_='whatsapp:+****************',
-                                  to='whatsapp:***********')
+                                  from_='whatsapp:++++++++++',
+                                  to='whatsapp:++++++++++++')
         print("otp sent")
     except:
         print("error in sending message")
@@ -67,6 +68,9 @@ def Send(request,phone):
 def Login(request):
     if request.session.get('name'):
        nm=request.session.get('name')
+       us=Register.objects.get(username=nm)
+      # if us.otp is None:
+        #   return HttpResponseRedirect(reverse('send_verifi_ph',args=(us.ph_no,)))
        return HttpResponseRedirect(reverse('dashboard',args=(nm,)))
     else:
        if request.method=="POST":
@@ -77,6 +81,9 @@ def Login(request):
               request.session['name']=username
               print(request.session['name'])
               print("sesssion set!")
+              us=Register.objects.get(username=username)
+              #if us.otp is None:
+                #  return HttpResponseRedirect(reverse('send_verifi_ph',args=(us.ph_no,)))
               return HttpResponseRedirect(reverse('dashboard',args=(username,)))
        else:
             form=LoginForm()
@@ -89,22 +96,10 @@ def Login(request):
 def dashboard(request,user):
     if request.session.get('name')==user:
         us=Register.objects.get(username=user)
-        ch=Members.objects.filter(member=user).values_list('channel', flat=True).order_by('id')
+        ch=Members.objects.filter(members=user).values_list('channel', flat=True).order_by('id')
         print(ch)
         all_ch=Channels.objects.all().values_list('channel', flat=True).order_by('id')
         print(all_ch)
-        if request.method == 'POST' :
-            if request.FILES['myfile']:
-                myfile = request.FILES['myfile']
-                fs = FileSystemStorage()
-                filename = fs.save(myfile.name, myfile)
-                uploaded_file_url = fs.url(filename)
-                us.img_link=uploaded_file_url
-                us.save()
-                print(uploaded_file_url)
-                return render(request, 'dashboard.html', {
-                    'us':us,'user':user,'ch':ch,'all':all_ch,
-                    })
         context={
         'user':user,
         'ch':ch,
@@ -123,11 +118,15 @@ def verify_ph(request,code,phone):
     if request.method=='POST':
         form = VerificationForm(request.POST)
         if form.is_valid():
-            username=Register.objects.get(ph_no=phone).username
+            us=Register()
+            user=Register.objects.get(ph_no=phone)
             data=form.cleaned_data['code']
-            request.session['name']=username
+            request.session['name']=user.username
             if(verify_password(code,data) is True):
-                return HttpResponseRedirect(reverse('dashboard',args=(username,)))
+                #print(user.otp)
+                #user.otp='1'
+                #rint("here",user.otp)
+                return HttpResponseRedirect(reverse('dashboard',args=(user.username,)))
             else:
                 err="invalid otp"
                 context={
@@ -161,7 +160,7 @@ def forgot_pass(request):
             code1=hash_password(rn)
             code2=hash_password(rn)
             email_link=str('http://127.0.0.1:8000/medico/reset/'+code1+'/'+us + '/' +code2)
-            subject, from_email, to = 'hello', '+++++++++++@gmail.com', '************@gmail.com'
+            subject, from_email, to = 'hello', '++++++++++@gmail.com', '+++++++++++@gmail.com'
             text_content = 'This is an important message.'
             html_content = 'someone  requested reset password for your account ,click on the link below <br>'+email_link
             msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
@@ -222,50 +221,94 @@ def Reset(request,code1,id,code2):
 
 def room(request, room_name):
     if request.session.get('name'):
-        all_ch=Members.objects.all().filter(channel=room_name).values_list('member', flat=True).order_by('id')
+        us=request.session.get('name')
+        all_ch=Members.objects.all().filter(channel=room_name).values_list('members', flat=True).order_by('id')
         return render(request, 'room.html', {
         'room_name_json': mark_safe(json.dumps(room_name)),
-         'all_ch':all_ch,
+         'all_ch':all_ch,'us':us,
         })
     else:
         return HttpResponseRedirect(reverse('login'))
 
-def Channel_create(request,roomName):
-    us=Channels()
-    us.creator=request.session.get('name')
-    us.channel=roomName
-    us2=Members()
-    us2.member=request.session.get('name')
-    us2.channel=roomName
-    us2.save()
-    err=None
-    try:
-        us.save()
-    except:
-        err="room already exists"
-        return HttpResponseRedirect(reverse('dashboard',args=(request.session.get('name'),)))
-    return HttpResponseRedirect(reverse('room',args=(roomName,)))
+def Channel_create(request):
+    user=request.session.get('name')
+    if request.method=='POST':
+        form = NewChannelForm(request.POST)
+        us=Channels()
+        us2=Members()
+        if form.is_valid():
+            us.creator=form.cleaned_data['Creator']
+            us2.members=form.cleaned_data['Creator']
+            us.channel=form.cleaned_data['room_name']
+            us2.channel=us.channel
+            us.motto=form.cleaned_data['motto']
+            if us.creator!=user:
+                err="invalid username"
+                context={
+                     'form':form,
+                     'err':err,
+                     }
+                return render(request,'join_chat.html',context)
+
+            us.save()
+            us2.save()
+            return HttpResponseRedirect(reverse('room',args=(us.channel,)))
+
+    else:
+        form=NewChannelForm()
+    context={
+         'form':form,
+         }
+    return render(request,'join_chat.html',context)
+
 
 def Join_room(request,room_name):
     us=Members()
     user=request.session.get('name')
     err=None
-    if Members.objects.filter(member=user,channel=room_name).exists():
-       err="already a member"
+    all_ch=Members.objects.all().filter(channel=room_name).values_list('members', flat=True).order_by('id')
+    if Members.objects.filter(members=user,channel=room_name).exists():
+       err="already a members"
     else:
-        us.member=user
+        us.members=user
         us.channel=room_name
         print("here")
         us.save()
     return render(request, 'room.html', {
     'room_name_json': mark_safe(json.dumps(room_name)),
     'err':err,
+    'all_ch':all_ch,
     })
 
-    '''def Create_channel(request,room_name):
-    if request.session.get('name'):
-        us=Channels()
-        us.user=request.session.get('name')
-        channel=room_name
-        us.save()
-        return HttpResponseRedirect(reverse('room',args=(room_name,)))'''
+
+def Update(request,user):
+    us=Register.objects.get(username=user)
+    print(us.image_link)
+    if request.method=='POST':
+        form = UpdateForm(request.POST)
+        if form.is_valid():
+            us.first_name=form.cleaned_data['first_name']
+            us.last_name=form.cleaned_data['last_name']
+            us.email=form.cleaned_data['email']
+            us.save()
+            return HttpResponseRedirect(reverse('update',args=(user,)))
+
+        if request.FILES['myfile']:
+
+            myfile = request.FILES['myfile']
+            fs = FileSystemStorage()
+            filename = fs.save(myfile.name, myfile)
+            uploaded_file_url = fs.url(filename)
+            us.image_link=uploaded_file_url
+            us.save()
+            print(uploaded_file_url)
+            return HttpResponseRedirect(reverse('update',args=(user,)))
+
+    else:
+        form=UpdateForm(initial={'first_name':us.first_name,'last_name':us.last_name,'email':us.email})
+    context={
+         'form':form,
+         'user':user,
+         'us':us
+         }
+    return render(request,'update.html',context)

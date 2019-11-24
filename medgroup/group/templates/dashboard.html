@@ -63,7 +63,7 @@ body {
 
 .header{
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-background-color: #012e69;
+background-color: #73f8a5;
 height:60px;
 text-align: center;
 font-size:40px;
@@ -89,183 +89,160 @@ img{
   margin-left: 5%;
   margin-right: 2%
 }
-
-.footer{
-  position: sticky;
-  margin-top: 80%;
+</style>
+<style>
+* {
+  box-sizing: border-box;
 }
 
-.video{
-  margin-left: 30%;
-  margin-right: 30%;
-  margin-top: 20%;
-
-}
-
-/* Button used to open the chat form - fixed at the bottom of the page */
-.open-button {
-  background-color: #555;
-  color: white;
-  padding: 16px 20px;
-  border: none;
-  cursor: pointer;
-  opacity: 0.8;
-  position: fixed;
-  bottom: 23px;
-  right: 28px;
-  width: 280px;
-}
-
-/* The popup chat - hidden by default */
-.chat-popup {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  right: 15px;
-  border: 3px solid #f1f1f1;
-  z-index: 9;
-}
-
-/* Add styles to the form container */
-.form-container {
-  max-width: 300px;
-  padding: 10px;
+body {
+  font-family: Arial, Helvetica, sans-serif;
   background-color: white;
 }
 
-/* Full-width textarea */
-.form-container textarea {
-  width: 100%;
-  padding: 15px;
-  margin: 5px 0 22px 0;
-  border: none;
-  background: #f1f1f1;
-  resize: none;
-  min-height: 200px;
+/* Style the header */
+header {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+background-color: #73f8a5;
+height:80px;
+text-align: center;
+font-size:55px;
+color:#066f24;
+position: relative;
 }
 
-/* When the textarea gets focus, do something */
-.form-container textarea:focus {
-  background-color: #ddd;
-  outline: none;
+/* Create two columns/boxes that floats next to each other */
+nav {
+  float: left;
+  width: 20%;
+  height: 700px; /* only for demonstration, should be removed */
+  background: #d5f3dd;
+  padding: 20px;
 }
 
-/* Set a style for the submit/send button */
-.form-container .btn {
-  background-color: #4CAF50;
+/* Style the list inside the menu */
+nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+article {
+  float: left;
+  padding: 20px;
+  width: 50%;
+  background-color: #d5f3dd;
+  height: 500px; /* only for demonstration, should be removed */
+}
+
+.side {
+ float :right;
+ padding :10px;
+ width:30%;
+  background-color: #d5f3dd;
+ height:500px;
+ }
+
+
+/* Clear floats after the columns
+section:after {
+  content: "";
+  display: table;
+  clear: both;
+}*/
+
+/* Style the footer */
+footer {
+  background-color: #03561a;
+  padding: 10px;
+  text-align: center;
+  height:50px;;
   color: white;
-  padding: 16px 20px;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  margin-bottom:10px;
-  opacity: 0.8;
 }
 
-/* Add a red background color to the cancel button */
-.form-container .cancel {
-  background-color: red;
+/* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
+@media (max-width: 600px) {
+  nav, article {
+    width: 100%;
+    height: auto;
+  }
 }
 
-/* Add some hover effects to buttons */
-.form-container .btn:hover, .open-button:hover {
-  opacity: 1;
+.member ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+.member li {
+  float: left;
+}
+
+.member li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.member li a:hover:not(.active) {
+  background-color: #111;
+}
+
+.member .active {
+  background-color: #4CAF50;
 }
 
 
-
-  </style>
+</style>
 </head>
 <body onunload="">
-  <div class="header">
-  </div>
-<div id="mySidenav" class="sidenav">
-  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-  <br>
-  <img src="{{ us.img_link }}">
-  <br>
-  <form method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      <div class="edit-css">
-      <input type="file" name="myfile">
-      <button type="submit">Upload</button>
-    </div>
-    </form>
-  <a href=" {% url 'home' %}">Home</a>
-  <a href=" {% url 'logout' user %}">logout</a>
+<header>
+  Chikitsak
+</header>
+<div class="member">
+<ul>
+  <li><a href="">Home</a></li>
+  <li><a href="{% url 'update' user %}">Update </a></li>
+  <li><a href="#contact">Contact</a></li>
 
-
+</ul>
 </div>
-
-<span style="font-size:30px;cursor:pointer;margin-left: 90%;" onclick="openNav()">&#9776;</span>
-
-<script>
-function openNav() {
-  document.getElementById("mySidenav").style.width = "250px";
-}
-
-function closeNav() {
-  document.getElementById("mySidenav").style.width = "0";
-}
-</script>
-
 
 <div class="content">
   hello {{ user }} to your dashboard
 
 </div>
 <br><br>
-
+<nav>
 Current Channels you are member
 <br>
 {% if ch %}
   {% for chan in ch %}
-   <span><a href="{% url 'room' chan %}">{{ chan }}</a></span>
    <br>
+  <a href="{% url 'room' chan %}"> {{ chan }}</a>
     {% endfor %}
 {% endif %}
-<button class="open-button" onclick="openForm()">Chat</button>
+</nav>
 
-
-    <br>
+<div class="side">
+  <a href="{% url 'create_channel'%}">Create new channel </a>
+  <br><br>
     Available channels
+    <br>
+    <ul>
     {% for val in all %}
-      {{ val }} <span> <a href="{% url 'join_room' val %}">Become a member </a></span>
+    <li>
+      <b>{{ val }}</b>     <span> <a href="{% url 'join_room' val %}">Become a member </a></span>
+    </li>
       <br>
     {% endfor %}
     <br><br>
-
-
-    Create a chat room here <br/>
-    <input id="room-name-input" type="text" size="100"/><br/>
-    <input id="room-name-submit" type="button" value="Enter"/>
-
-    <script>
-        document.querySelector('#room-name-input').focus();
-        document.querySelector('#room-name-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#room-name-submit').click();
-            }
-        };
-
-        document.querySelector('#room-name-submit').onclick = function(e) {
-            var roomName = document.querySelector('#room-name-input').value;
-            window.location.pathname = 'medico/channel_create/' + roomName + '/';
-        };
-    </script>
-
-<script>
-function openForm() {
-  document.getElementById("myForm").style.display = "block";
-}
-
-function closeForm() {
-  document.getElementById("myForm").style.display = "none";
-}
-</script>
-
-<div class="footer">
-  gjhgjhgjhfijfdijf
 </div>
+
+
+
 </body>
 </html>
