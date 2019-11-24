@@ -5,30 +5,108 @@
     <meta charset="utf-8"/>
     <title>Chat Room</title>
     <style>
-    .message{
+  /*  .message{
       margin-right: 30%;
     }
     .members{
       margin-left: 70%;
+    }*/
+
+    </style>
+
+    <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: white;
+    }
+
+    /* Style the header */
+    header {
+      font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    background-color: #73f8a5;
+    height:60px;
+    text-align: center;
+    font-size:40px;
+    color:#066f24;
+    position: relative;
+    }
+
+    /* Create two columns/boxes that floats next to each other */
+    nav {
+      float: left;
+      width: 50%;
+      height: 700px; /* only for demonstration, should be removed */
+      /*background: #d5f3dd;*/
+      padding: 20px;
+    }
+
+    /* Style the list inside the menu */
+    nav ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    article {
+      float: left;
+      padding: 20px;
+      width: 50%;
+      background-color: #d5f3dd;
+      height: 500px; /* only for demonstration, should be removed */
+    }
+
+    .side {
+     float :right;
+     padding :10px;
+     width:30%;
+      background-color: #d5f3dd;
+     height:500px;
+     }
+
+    footer {
+      background-color: #03561a;
+      padding: 10px;
+      text-align: center;
+      height:50px;;
+      color: white;
+    }
+
+    /* Responsive layout - makes the two columns/boxes stack on top of each other instead of next to each other, on small screens */
+    @media (max-width: 600px) {
+      nav, article {
+        width: 100%;
+        height: auto;
+      }
     }
     </style>
 </head>
 <body>
+  <header>
+    Chikitsak
+  </header>
   <br>
   <br>
   {{ err }}
 </br>
-<div class="message">
-    <textarea id="chat-log" cols="100" rows="20"></textarea><br/>
-    <input id="chat-message-input" type="text" size="100"/><br/>
-    <input id="chat-message-submit" type="button" value="Send"/>
-  </div>
-  <div class="member">
+<article>
+  Members of this channel
+  <br>
     {% for all in all_ch %}
       {{ all }}
+      <br>
       {% endfor %}
-  </div>
-</body>
+
+</article>
+<nav>
+    <textarea id="chat-log" cols="100" rows="20"></textarea><br/>
+    <input id="chat-message-input" type="text" size="58"/><br/>
+    <input id="chat-message-submit" type="button" value="Send"/>
+  </nav>
+
+  </body>
 <script>
     var roomName = {{ room_name_json }};
 
@@ -39,7 +117,9 @@
     chatSocket.onmessage = function(e) {
         var data = JSON.parse(e.data);
         var message = data['message'];
-        document.querySelector('#chat-log').value += (message + '\n');
+        //var user = '{{ us }}'
+        //user.style.fontWeight='900';
+        document.querySelector('#chat-log').value += ('{{ us }}:    ' + message + '\n');
     };
 
     chatSocket.onclose = function(e) {
