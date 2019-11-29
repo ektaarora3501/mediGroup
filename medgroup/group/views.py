@@ -225,7 +225,7 @@ def room(request, room_name):
         all_ch=Members.objects.all().filter(channel=room_name).values_list('members', flat=True).order_by('id')
         return render(request, 'room.html', {
         'room_name_json': mark_safe(json.dumps(room_name)),
-         'all_ch':all_ch,'us':us,
+         'all_ch':all_ch,'user':mark_safe(json.dumps(us)),
         })
     else:
         return HttpResponseRedirect(reverse('login'))
@@ -276,6 +276,7 @@ def Join_room(request,room_name):
         us.save()
     return render(request, 'room.html', {
     'room_name_json': mark_safe(json.dumps(room_name)),
+    'user':mark_safe(json.dumps(user)),
     'err':err,
     'all_ch':all_ch,
     })
