@@ -116,10 +116,11 @@
 
     chatSocket.onmessage = function(e) {
         var data = JSON.parse(e.data);
+        console.log(data);
         var message = data['message'];
-        //var user = '{{ us }}'
+        var val  =   data['user'];
         //user.style.fontWeight='900';
-        document.querySelector('#chat-log').value += ('{{ us }}:    ' + message + '\n');
+        document.querySelector('#chat-log').value += (val + ':    ' + message + '\n');
     };
 
     chatSocket.onclose = function(e) {
@@ -135,9 +136,11 @@
 
     document.querySelector('#chat-message-submit').onclick = function(e) {
         var messageInputDom = document.querySelector('#chat-message-input');
+        var user = {{ user }}
         var message = messageInputDom.value;
         chatSocket.send(JSON.stringify({
-            'message': message
+            'message': message,
+            'user'   : user,
         }));
 
         messageInputDom.value = '';
