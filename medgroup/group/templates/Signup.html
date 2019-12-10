@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <title>Chikitsak | Register</title>
+        <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <!-- Bootstrap core CSS -->
+  {% include 'snippets/css.html' %}
+</head>
+
+<body>
+  {% include 'snippets/nav.html' %}
+    <div class="container">
+        <h2>Register</h2>
+        <form class="form-horizontal" action="" method="post">
+    {% csrf_token %}
+  {% for field in form %}
+  <div class="form-group">
+      <div class="col-sm-5">
+        {{ field.label_tag }}
+         <br>{{ field }}
+         {% if field.help_text %}
+        {{ field.help_text }}
+        {% endif %}
+        <div class="error">
+        {{ field.errors }}
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+        <div class="form-group">
+            <div class="col-sm-5">
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-5">
+              <span>Already registered ?<a href="{% url 'login' %}">Login here</a>
+            </div>
+          </div>
+</div>
+</div>
+  </form>
+  {% include 'snippets/js.html' %}
+</body>
+</html>

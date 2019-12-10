@@ -1,0 +1,56 @@
+<html>
+
+<head>
+  <title>Chikitsak | Login</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <!-- Bootstrap core CSS -->
+  {% include 'snippets/css.html' %}
+</head>
+
+<body>
+  {% include 'snippets/nav.html' %}
+  <br>
+  hello user ! you are sucessfully registered . One more thing before you move to our site, please verify your phone
+  note
+  <br>
+  Phone no {{ ph }}
+
+  <form action="" method="post">
+    <div class="container">
+      <div class="body">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="row">
+          <div class="col-md-2">
+            <div class="field">
+              {{ field.label_tag }}
+              <br>{{ field }}
+              {% if field.help_text %}
+              <sup>{{ field.help_text }}</sup>
+              {% endif %}
+              <div class="error">
+                {{ field.errors }}
+              </div>
+
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        <div class="field">
+          <br>
+          <input type="submit" value="Submit">
+
+        </div>
+      </div>
+    </div>
+  </form>
+  {% include 'snippets/js.html' %}
+</body>
+
+</html>
