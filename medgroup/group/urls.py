@@ -15,4 +15,5 @@ urlpatterns=[
      path('userpage/<user>',views.dashboard,name='dashboard'),
      path('chat/<str:room_name>/',views.room,name='room'),
      path('logout/<user>',views.Logout,name='logout'),
+     path('appointment/book',views.Book,name='book_appoint'),
 ]

@@ -1,8 +1,10 @@
-from django.forms import forms,CharField,EmailField,PasswordInput
+from django.forms import forms,CharField,EmailField,PasswordInput,TimeField,DateField
 from group.models import Register
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from hashing import *
+from datetime import datetime,date
+import time
 
 
 
@@ -112,4 +114,27 @@ class UpdateForm(forms.Form):
     last_name=CharField(max_length=100,label="Last Name")
     email=CharField(max_length=100,label="Email")
 
-    
+
+class AppointmentForm(forms.Form):
+    """docstring forAppointmentForm."""
+    pat_name=CharField(max_length=100,label='Patient s name ')
+    phone=CharField(max_length=100,label="Phone number")
+    email=EmailField()
+    hos_id=CharField(max_length=5,label='Hospital id') #created for testing
+    d = DateField(label='Date',initial=date.today().strftime("%d/%m/%Y"))
+    t = TimeField(label='time',initial=time.strftime("%H:%M:%S",time.localtime()))
+
+    def clean_hos_id(self):
+        id=self.cleaned_data['hos_id']
+        if(len(id)<5):
+            raise ValidationError(_("Invalid Id"))
+        return id
+
+        ## TODO: create a database for hospital id
+        # TODO: currently showing page only
+
+
+class HospitalForm(forms.Form):
+    hos_id=CharField(max_length=100,label='Hospital Id')
+    password=CharField(max_length=100,label='Password',widget=PasswordInput)
+    #date=models.CharField(max_length=100,default=date.today().strftime("%d/%m/%Y"))

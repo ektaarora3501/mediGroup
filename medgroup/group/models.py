@@ -1,5 +1,6 @@
 from django.db import models
-from datetime import datetime
+from datetime import date
+import time
 # Create your models here.
 
 class Register(models.Model):
@@ -17,7 +18,8 @@ class Register(models.Model):
 
 class Chat(models.Model):
     chats=models.CharField(max_length=1000)
-    time=models.DateTimeField(default=datetime.now)
+    date=models.CharField(max_length=100,default=date.today().strftime("%d/%m/%Y"))
+    time=models.CharField(max_length=100,default=time.strftime("%H:%M:%S",time.localtime()))
     user=models.CharField(max_length=100)
     channel=models.CharField(max_length=100)
     def __str__(self):
@@ -39,3 +41,9 @@ class Members(models.Model):
 
     def __str__(self):
         return f'{self.members},{self.channel}'
+
+class Hospital(models.Model):
+    hos_id=models.CharField(max_length=5)
+    p_name=models.CharField(max_length=5)
+    date=models.CharField(max_length=100,default=date.today().strftime("%d/%m/%Y"))
+    time=models.CharField(max_length=100,default=time.strftime("%H:%M:%S",time.localtime()))
