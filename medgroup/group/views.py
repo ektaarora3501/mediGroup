@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
-from group.models import Register,Channels,Chat,Members
+from group.models import Register,Channels,Chat,Members,Hospital
 from django.urls import reverse,reverse_lazy
-from group.forms import SignupForm,LoginForm,VerificationForm,ForgotPassForm,ResetPassForm,NewChannelForm,UpdateForm
+from group.forms import SignupForm,LoginForm,VerificationForm,ForgotPassForm,ResetPassForm,NewChannelForm ,UpdateForm,AppointmentForm
 from django.http import HttpResponseRedirect
 from django.utils.safestring import mark_safe
 from django.core.files.storage import FileSystemStorage
@@ -15,10 +15,6 @@ import os
 import json
 # Create your views here.
 
-account_sid = '++++++++++++++++++++++++++'
-auth_token = '***********************'
-
-client=Client(account_sid,auth_token)
 
 
 def index(request):
@@ -160,7 +156,7 @@ def forgot_pass(request):
             code1=hash_password(rn)
             code2=hash_password(rn)
             email_link=str('http://127.0.0.1:8000/medico/reset/'+code1+'/'+us + '/' +code2)
-            subject, from_email, to = 'hello', '++++++++++@gmail.com', '+++++++++++@gmail.com'
+            subject, from_email, to = 'Reset password', '+++++++++++@gmail.com', '+++++++++++@gmail.com'
             text_content = 'This is an important message.'
             html_content = 'someone  requested reset password for your account ,click on the link below <br>'+email_link
             msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
@@ -313,3 +309,47 @@ def Update(request,user):
          'us':us
          }
     return render(request,'update.html',context)
+
+
+def Book(request):
+    if request.session.get('name'):
+        us=request.session.get('name')
+        form = AppointmentForm(request.POST)
+        if request.method=='POST':
+            if form.is_valid():
+               us=Hospital()
+               print("form valid")
+               name=form.cleaned_data['pat_name']
+               phone=form.cleaned_data['phone']
+               email=form.cleaned_data['email']
+               id=form.cleaned_data['hos_id']
+               t=str(form.cleaned_data['t'])
+               d=str(form.cleaned_data['d'])
+               us.hos_id=id
+               us.p_name=name
+               us.date=d
+               us.time=t
+               us.save()
+               subject, from_email, to = 'Appointment confirmed', '++++++++++++@gmail.com', '****************@gmail.com'
+               text_content = 'This is an important message.'
+               html_content = 'Hey  your appointment has been confirmed <br> <ul><li> name ' + name + '</li><li> time ' + t + '</li> <li> date ' + d + '</li> </ul>'
+               msg = EmailMultiAlternatives(subject,text_content, from_email, [to])
+               msg.attach_alternative(html_content, "text/html")
+               msg.send()
+               print("mail sent")
+
+            else:
+               print("here")
+               pass
+
+            return HttpResponseRedirect(reverse('dashboard',args=(us,)))
+
+        else:
+            form=AppointmentForm()
+        context={
+             'form':form,
+             }
+        return render(request,'book.html',context)
+
+    else:
+        return HttpResponseRedirect(reverse('login'))
