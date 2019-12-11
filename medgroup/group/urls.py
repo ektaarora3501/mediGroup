@@ -12,6 +12,6 @@ urlpatterns=[
      path('join/<str:room_name>',views.Join_room,name='join_room'),
      path('channel_create/<str:roomName>/',views.Channel_create,name='create_channel'),
      path('userpage/<user>',views.dashboard,name='dashboard'),
-     path('chat/<str:room_name>/',views.room,name='room'),
+     path('<str:room_name>/',views.room,name='room'),
      path('logout/<user>',views.Logout,name='logout'),
 ]

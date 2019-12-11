@@ -224,10 +224,8 @@ def Reset(request,code1,id,code2):
 
 def room(request, room_name):
     if request.session.get('name'):
-        all_ch=Members.objects.all().filter(channel=room_name).values_list('member', flat=True).order_by('id')
         return render(request, 'room.html', {
-        'room_name_json': mark_safe(json.dumps(room_name)),
-         'all_ch':all_ch,
+        'room_name_json': mark_safe(json.dumps(room_name))
         })
     else:
         return HttpResponseRedirect(reverse('login'))
