@@ -41,8 +41,8 @@ class SignupForm(forms.Form):
         return em
 
 class LoginForm(forms.Form):
-    username=CharField(max_length=10,label='Username')
-    password=CharField(max_length=12,label='Password',widget=PasswordInput)
+    username = CharField(max_length=10,label='Username')
+    password = CharField(max_length=12,label='Password',widget=PasswordInput)
 
 
     def clean_password(self):
@@ -61,7 +61,7 @@ class LoginForm(forms.Form):
 
 
 class VerificationForm(forms.Form):
-    code=CharField(max_length=4,help_text="enter the opt sent ",label="Otp")
+    code = CharField(max_length=4,help_text="enter the opt sent ",label="Otp")
 
 
 

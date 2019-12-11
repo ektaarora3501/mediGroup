@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'group.apps.GroupConfig',
 
+    'widget_tweaks',
     ]
 
 MIDDLEWARE = [
