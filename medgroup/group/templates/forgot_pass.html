@@ -1,85 +1,40 @@
+{% load widget_tweaks %}
 <html>
-<head>
-  <title>
-    Forgot pass form
-  </title>
-  <style>
-
-  .field{
-    color: blue;
-    align: center;
-    margin-left: 40%;
-    margin-right: auto;
-
-  }
-  .error{
-    color:red;
-  }
-
-
-.header{
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  background-color:cyan;
-  height:60px;
-  text-align: center;
-  font-size:40px;
-  color:white;
-
-
-  }
-
-  .home{
-  background-color: #ce93d8;
-  height:35px;
-  }
-
-  font{
-    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-    font-size:20px;
-  }
-
-  sup{
-    color: #6A5ACD;
-  }
-
-.body{
-  margin-top: 5%;
-}
-  </style>
-</head>
-<body>
-  <div class="header">
-  </div>
-  {{ err }}
-  <form action="" method="post" >
-    <div class="container">
-     <div class="body">
-    {% csrf_token %}
-  {% for field in form %}
-    <div class="row">
-       <div class="col-md-2">
-         <div class="field">
-        {{ field.label_tag }}
-         <br>{{ field }}
-        {% if field.help_text %}
-          <sup>{{ field.help_text }}</sup>
-        {% endif %}
-        <div class="error">
-        {{ field.errors }}
-      </div>
-
-       </div>
-</div>
-       </div>
- {% endfor %}
- <div class="field">
-   <br>
-  <input type="submit" value="Submit">
-
-
-</div>
-</div>
-</div>
-  </form>
-</body>
+    <head>
+        <title>Chikitsak | Forgot Password</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        {% include 'snippets/js.html' %}
+        <!-- Bootstrap core CSS -->
+        {% include 'snippets/css.html' %}
+      </head>
+      <body>
+          <div class="container">
+            <div class="row">
+              <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div class="card card-signin my-5">
+                  <div class="card-body">
+                    <h5 class="card-title text-center">Forgot Password</h5>
+                    <form class="form-signin" action="" method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="form-label-group"> 
+                      {% render_field field placeholder=field.name class="form-control" %}
+                      {{ field.label_tag }}
+                      <div class="error">
+                        {{ field.errors }}
+                      </div>
+                    </div>
+                    {% endfor %}
+                    <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign in</button>
+                    <label class="custom-label" ><a href="{% url 'forgot_pass' %}">Forgot password</a></label>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </body>
 </html>

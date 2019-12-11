@@ -1,19 +1,17 @@
+{% load widget_tweaks %}
 <!DOCTYPE HTML>
 <html lang="en">
 
 <head>
-  <title>Dashboard</title>
+  <title> Dashboard </title>
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  {% include 'snippets/js.html' %}
   <!-- Bootstrap core CSS -->
   {% include 'snippets/css.html' %}
-
 <script>
 if(!!window.performance && window.performance.navigation.type == 2)
 {
@@ -22,92 +20,39 @@ if(!!window.performance && window.performance.navigation.type == 2)
 </script>
 </head>
 <body onunload="">
-  <div class="d-flex" id="wrapper">
-    <!-- Sidebar -->
-    <div class="bg-light border-right" id="sidebar-wrapper">
-        <div class="sidebar-heading"><img src="{{ us.img_link }}"></div>
-        <div class="list-group list-group-flush">
-            <form method="post" enctype="multipart/form-data">
-              {% csrf_token %}
-              <div class="edit-css">
-              <input class="list-group-item list-group-item-action bg-light" type="file" name="myfile">
-              <button class="list-group-item list-group-item-action bg-light" type="submit">Upload</button>
-            </div>
-            </form>
-        </div>
-      </div>
-      <!-- /#sidebar-wrapper -->
+
+{% include 'snippets/nav.html' %}
 <!-- Page Content -->
-<div id="page-content-wrapper">
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-      <button class="btn btn-primary" id="menu-toggle" class="fa fa-align-right" aria-hidden="true">Menu</button>
-
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-          <li class="nav-item active">
-            <a class="nav-link" href=" {% url 'home' %}">Home <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              More
-            </a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href=" {% url 'logout' user %}">logout</a>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </nav>
 
     <div class="container-fluid">
-      <h1 class="mt-4">Hello {{ user }} to your dashboard</h1>
-      <p>Current Channels you are member
-          <br>
-          {% if ch %}
+      <div class = "row">
+        <div class = "col">
+            Current Channels you are member
+            <br>
+            {% if ch %}
             {% for chan in ch %}
-             <span><a href="{% url 'room' chan %}">{{ chan }}</a></span>
-             <br>
-              {% endfor %}
-          {% endif %}
-          <button class="open-button" onclick="openForm()">Chat</button>
-          
-          
-              <br>
-              Available channels
-              {% for val in all %}
-                {{ val }} <span> <a href="{% url 'join_room' val %}">Become a member </a></span>
-                <br>
-              {% endfor %}
-              <br><br>
-          
-          
-              Create a chat room here <br/>
-              <input id="room-name-input" type="text" size="25"/>
-              <input id="room-name-submit" type="button" value="Enter"/></p>
-    </div>
-  </div>
-  <!-- /#page-content-wrapper -->
-
-</div>
-<!-- /#wrapper -->
-
-<!-- Bootstrap core JavaScript -->
-<script src="vendor/jquery/jquery.min.js"></script>
-<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-<!-- Menu Toggle Script -->
-<script>
-  $("#menu-toggle").click(function(e) {
-    e.preventDefault();
-    $("#wrapper").toggleClass("toggled");
-  });
-</script>
-
+            <span><a href="{% url 'room' chan %}">{{ chan }}</a></span>
+            <br>
+            {% endfor %}
+            {% endif %}
+            <button class="open-button" onclick="openForm()">Chat</button>
+        </div>
+        <div class = "col-6">
+            <h4 class="mt-4">Hello {{ user }} to your dashboard</h4>
+        </div>
+        <div class = "col">
+            Available channels<br>
+            {% for val in all %}
+            {{ val }} <span> <a href="{% url 'join_room' val %}">Become a member </a></span>
+            <br>
+            {% endfor %}
+        </div>
+      </div>
+    
+    Create a chat room here <br />
+    <input id="room-name-input" type="text" size="25" />
+    <input id="room-name-submit" type="button" value="Enter" /></p>
 
     <script>
         document.querySelector('#room-name-input').focus();
@@ -122,16 +67,6 @@ if(!!window.performance && window.performance.navigation.type == 2)
             window.location.pathname = 'medico/channel_create/' + roomName + '/';
         };
     </script>
-
-<script>
-function openForm() {
-  document.getElementById("myForm").style.display = "block";
-}
-
-function closeForm() {
-  document.getElementById("myForm").style.display = "none";
-}
-</script>
 
 <div class="footer">
   gjhgjhgjhfijfdijf
