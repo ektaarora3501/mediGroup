@@ -12,6 +12,7 @@
 </head>
 
 <body>
+
   <div class="container">
     <div class="row">
       <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
@@ -29,8 +30,11 @@
               </div>
             </div>
             {% endfor %}
-            <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign in</button>
-            <label class="custom-label" ><a href="{% url 'forgot_pass' %}">Forgot password</a></label>
+            <button class="btn btn-lg btn-success btn-block text-uppercase" type="submit">Sign in</button>
+            <br>
+            <label class="custom-label text-center" ><a href="{% url 'forgot_pass' %}">Forgot password</a></label>
+            <br>
+            Dont have account?<label class="custom-label text-center" ><a href="{% url 'register' %}">Sign up</a></label>
             </form>
           </div>
         </div>
