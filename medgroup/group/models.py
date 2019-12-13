@@ -1,5 +1,9 @@
 from django.db import models
 from datetime import datetime
+from django.conf import settings
+from django.urls import reverse
+from .validators import validate_category
+from django.db.models.signals import pre_save, post_save
 # Create your models here.
 
 class Register(models.Model):
@@ -13,6 +17,10 @@ class Register(models.Model):
 
     def __str__(self):
         return f'{self.first_name},{self.last_name},{self.username}'
+    
+    @property
+    def title(self):
+        return self.username
 
 class Chat(models.Model):
     chats=models.CharField(max_length=1000)
@@ -37,3 +45,5 @@ class Members(models.Model):
 
     def __str__(self):
         return f'{self.member},{self.channel}'
+
+

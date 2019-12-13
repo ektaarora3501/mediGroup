@@ -1,12 +1,13 @@
 <!--NavBar-->
-<div class="container">
-    <div class = "card text-center">
-        <a class="navbar-brand" href="{% url 'home' %}">Chikitsak</a>
+<div class="container px-2 pt-2 pb-1">
+    <div class = "card text-center bg-success shadow rounded">
+        <a class="navbar-brand" href="{% url 'home' %}"><h1 class="display-4">Chikitsak</h1></a>
     </div>
 </div>
-<div class="container">
-    <div class="card">
-    <nav class="nav justify-content-center navbar-toggler">
+<div class="container px-2 pb-2 " >
+    <div class="card  shadow bg-white rounded">
+    <header>
+    <nav class="nav justify-content-center navbar" >
         <a class="nav-link active" href="#">Groups</a>
         <a class="nav-link" href="#">Talks</a>
         <a class="nav-link" href="#">Hospital</a>
@@ -21,6 +22,7 @@
             </div>
         </li>
     </nav>
+    </header>
     </div>
 </div>
 <!--NavBar-->

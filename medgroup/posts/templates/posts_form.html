@@ -1,0 +1,24 @@
+<html>
+
+<head>
+    <title>Create Posts</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    {% include 'snippets/js.html' %}
+    <!-- Bootstrap core CSS -->
+    {% include 'snippets/css.html' %}
+</head>
+
+<body>
+    <form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Post</button>
+    </form>
+    {% if form.instance %}
+    <h1>{{ form.instance.title }}</h1>
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+<html>
+
+<head>
+    <title>
+        {{ post.title }}
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    {% include 'snippets/js.html' %}
+    <!-- Bootstrap core CSS -->
+    {% include 'snippets/css.html' %}
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 card mb-4  mt-3 left  top">
+                <div class="card-body">
+                    <h1>{% block title %} {{ object.title }} {% endblock title %}</h1>
+                    <p class=" text-muted">{{ post.author }} | {{ post.created_on }}</p>
+                    <p class="card-text ">{{ object.content | safe }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
