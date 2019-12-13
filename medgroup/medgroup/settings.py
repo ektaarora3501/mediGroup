@@ -38,6 +38,7 @@ EMAIL_PORT = 25
 # Application definition
 
 INSTALLED_APPS = [
+    'chat',
     'channels',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -99,8 +100,8 @@ DATABASES = {
      'default': {
        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'fore',
-        'USER': 'admin',
-        'PASSWORD': 'helloworld',
+        'USER': 'bombay',
+        'PASSWORD': 'bombay',
         'HOST': 'localhost',
         'PORT': '',
     }
@@ -150,3 +151,12 @@ STATICFILES_DIRS = (
 )
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}

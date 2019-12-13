@@ -22,11 +22,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
-]
-
-urlpatterns+=[
-    path('medico/',include('group.urls'))
+    path('medico/',include('group.urls')),
+    path('chat/', include('chat.urls')),
 ]
 
 if settings.DEBUG:
