@@ -3,17 +3,22 @@ from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView
 from .models import Post
+from .forms import PostsCreateForm, PostsAboutCreateForm
+from group.models import Register
 
 class PostList(ListView):
-    queryset = Post.objects.filter(status=1).order_by('-created_on')
-    template_name = 'posts.html'
+    template_name = 'dashboard.html'
+    def get_queryset(self):
+        return Posts.objects.all()
 
 class PostDetail(DetailView):
-    model = Post
-    template_name = 'posts_detail.html'
+    template_name = 'post_detail.html'
+    def get_queryset(self):
+        return Posts.objects.all()
 
-class PostCreate(LoginRequiredMixin, CreateView):
-    template_name = 'posts_form.html'
+class PostCreate(CreateView):
+    form_class = PostsAboutCreateForm
+    template_name = 'post_form.html'
 
     def form_valid(self, form):
         instance = form.save(commit=False)

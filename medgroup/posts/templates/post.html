@@ -1,0 +1,10 @@
+{% extends "group:dashboard" %}
+{% block content %}
+    {% for object in objects_list %}
+    <h2 class = "card-title">{{ post.title }}</h2>
+    <p>
+        {{ object.content|slice:":200" }}
+    </p>
+    <a href="{% url 'object_detail' object.slug  %}" class="btn btn-success">Read More &rarr;</a>
+    {% endfor %}
+{% endblock content %}
