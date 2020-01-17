@@ -92,10 +92,11 @@ def Login(request):
 def dashboard(request,user):
     if request.session.get('name')==user:
         us=Register.objects.get(username=user)
-        ch=Members.objects.filter(members=user).values_list('channel', flat=True).order_by('id')
+        ch=Members.objects.filter(username=user).values_list('channel', flat=True).order_by('id')
         print(ch)
-        all_ch=Channels.objects.all().values_list('channel', flat=True).order_by('id')
+        all_ch=set(Channels.objects.all().values_list('channel', flat=True).order_by('id'))-set(ch)
         print(all_ch)
+        all_ch=list(all_ch)
         context={
         'user':user,
         'ch':ch,
@@ -218,10 +219,15 @@ def Reset(request,code1,id,code2):
 def room(request, room_name):
     if request.session.get('name'):
         us=request.session.get('name')
-        all_ch=Members.objects.all().filter(channel=room_name).values_list('members', flat=True).order_by('id')
+        all_ch=list(set(Members.objects.all().filter(channel=room_name).values_list('username', flat=True).order_by('id'))-set(us))
+        print(all_ch)
+        role = Members.objects.get(username=us,channel=room_name).role
+        print(role)
         return render(request, 'room.html', {
         'room_name_json': mark_safe(json.dumps(room_name)),
          'all_ch':all_ch,'user':mark_safe(json.dumps(us)),
+         'role':role,
+         'chat' :mark_safe(json.dumps('deleted')),
         })
     else:
         return HttpResponseRedirect(reverse('login'))
@@ -233,12 +239,12 @@ def Channel_create(request):
         us=Channels()
         us2=Members()
         if form.is_valid():
-            us.creator=form.cleaned_data['Creator']
-            us2.members=form.cleaned_data['Creator']
+            us2.username=form.cleaned_data['Creator']
+            us2.role = "admin"
             us.channel=form.cleaned_data['room_name']
             us2.channel=us.channel
             us.motto=form.cleaned_data['motto']
-            if us.creator!=user:
+            if us2.username!=user:
                 err="invalid username"
                 context={
                      'form':form,
@@ -248,7 +254,7 @@ def Channel_create(request):
 
             us.save()
             us2.save()
-            return HttpResponseRedirect(reverse('room',args=(us.channel,)))
+            return HttpResponseRedirect(reverse('room',args=(us.channel,us2.role)))
 
     else:
         form=NewChannelForm()
@@ -262,12 +268,13 @@ def Join_room(request,room_name):
     us=Members()
     user=request.session.get('name')
     err=None
-    all_ch=Members.objects.all().filter(channel=room_name).values_list('members', flat=True).order_by('id')
-    if Members.objects.filter(members=user,channel=room_name).exists():
+    all_ch=Members.objects.all().filter(channel=room_name).values_list('username', flat=True).order_by('id')
+    if Members.objects.filter(username=user,channel=room_name).exists():
        err="already a members"
     else:
-        us.members=user
+        us.username=user
         us.channel=room_name
+        us.role = "member"
         print("here")
         us.save()
     return render(request, 'room.html', {
@@ -275,6 +282,7 @@ def Join_room(request,room_name):
     'user':mark_safe(json.dumps(user)),
     'err':err,
     'all_ch':all_ch,
+    'role':us.role,
     })
 
 

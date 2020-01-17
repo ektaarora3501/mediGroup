@@ -1,5 +1,5 @@
 from django.forms import forms,CharField,EmailField,PasswordInput,TimeField,DateField
-from group.models import Register
+from group.models import Register,Channels,Members
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from hashing import *
@@ -104,6 +104,11 @@ class NewChannelForm(forms.Form):
     room_name=CharField(max_length=100,label="Channel Name")
     Creator=CharField(max_length=100,label="Username")
     motto =CharField(max_length=100,label="Objective",help_text="Enter your objective of creating channel")
+
+    def clean_room_name(self):
+        rm=self.cleaned_data['room_name']
+        if Channels.objects.filter(channel=rm).exists():
+            raise ValidationError(_("Channel with that name already exists"))
 
 
 
