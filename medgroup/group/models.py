@@ -26,18 +26,18 @@ class Chat(models.Model):
         return f'{self.time},{self.chats},{self.channel},{self.user}'
 
 #database for new channels and storing their creator_names
-class Channels(models.Model):
-    creator=models.CharField(max_length=100)
-    channel=models.CharField(max_length=100,unique=True)
-    motto = models.CharField(max_length=100,default=None)
+class  Members(models.Model):
+    username = models.CharField(max_length=100,default=None)
+    role=models.CharField(max_length=100)
+    channel=models.CharField(max_length=100)
 
     def __str__(self):
         return f'{self.channel}'
 
 # a database for all the users connected to any channel
-class Members(models.Model):
-    members=models.CharField(max_length=100)
-    channel=models.CharField(max_length=100)
+class Channels(models.Model):
+    motto=models.CharField(max_length=100)
+    channel=models.CharField(max_length=100,unique=True)
 
     def __str__(self):
         return f'{self.members},{self.channel}'
