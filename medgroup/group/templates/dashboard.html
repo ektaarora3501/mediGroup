@@ -223,6 +223,7 @@ Current Channels you are member
 {% if ch %}
   {% for chan in ch %}
    <br>
+   
   <a href="{% url 'room' chan %}"> {{ chan }}</a>
     {% endfor %}
 {% endif %}

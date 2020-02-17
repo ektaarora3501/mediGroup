@@ -93,23 +93,28 @@
 </br>
 <article>
   Members of this channel
+  {{ role }}
   <br>
     {% for all in all_ch %}
-      {{ all }}
+      {% if role == "admin" %}
+      {{ all }} <a href="">Remove user  </a>
       <br>
+      {% else %}
+        {{ all }}
+      {% endif %}
       {% endfor %}
 
 </article>
 <nav>
-    <textarea id="chat-log" cols="100" rows="20"></textarea><br/>
-    <input id="chat-message-input" type="text" size="58"/><br/>
+    <textarea id="chat-log" cols="100" rows="20" readonly></textarea><br/>
+    <input id="chat-message-input" type="text" size="58"/ required><br/>
     <input id="chat-message-submit" type="button" value="Send"/>
   </nav>
 
   </body>
 <script>
     var roomName = {{ room_name_json }};
-
+    var ch = {{ chat }};
     var chatSocket = new WebSocket(
         'ws://' + window.location.host +
         '/ws/medico/chat/' + roomName + '/');
@@ -119,8 +124,18 @@
         console.log(data);
         var message = data['message'];
         var val  =   data['user'];
+        var len = message.length;
         //user.style.fontWeight='900';
-        document.querySelector('#chat-log').value += (val + ':    ' + message + '\n');
+        if (len != 0){
+          document.querySelector('#chat-log').value += (val + ':    ' + message +  '\n');
+        }
+
+      /*  if (ch){
+        document.querySelector('#chat-log').value += (' yes\n');
+        }
+        else{
+          document.querySelector('#chat-log').value += ('no\n');
+        }*/
     };
 
     chatSocket.onclose = function(e) {
@@ -138,9 +153,13 @@
         var messageInputDom = document.querySelector('#chat-message-input');
         var user = {{ user }}
         var message = messageInputDom.value;
+        var len = message.length
+
+
         chatSocket.send(JSON.stringify({
             'message': message,
             'user'   : user,
+            // 'len'    : len,
         }));
 
         messageInputDom.value = '';
